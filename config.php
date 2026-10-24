@@ -1,8 +1,8 @@
 
 <?php
 // Student Management System — Render/Aiven + Local Development
-// Save as UTF-8 without BOM.
 
+// Start the session before any output or redirects.
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
@@ -12,9 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
                 !empty($_SERVER['HTTPS']) &&
                 $_SERVER['HTTPS'] !== 'off'
             ) ||
-            strtolower(
-                $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''
-            ) === 'https',
+            strtolower($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https',
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
@@ -48,12 +46,12 @@ if ($pass === false) {
     $pass = $production ? null : '';
 }
 
-// Aiven SSL certificate path.
+// Aiven CA certificate path.
 $ca = getenv('DB_SSL_CA_PATH') ?: (
     $production ? '/etc/secrets/ca.pem' : ''
 );
 
-// Existing code may reference these constants.
+// Define constants used by existing code.
 if (!defined('DB_HOST')) {
     define('DB_HOST', $host);
 }
@@ -75,19 +73,7 @@ if (!defined('ALLOW_ROLE_SELECTION_ON_SIGNUP')) {
 }
 
 try {
-    // TEMPORARY DIAGNOSTICS:
-    // Logs only whether values exist, never their actual contents.
-    error_log('DB diagnostic: ' . json_encode([
-        'DB_HOST_set' => $host !== '',
-        'DB_PORT_set' => $port > 0,
-        'DB_NAME_set' => $name !== '',
-        'DB_USER_set' => $user !== '',
-        'DB_PASSWORD_set' => $pass !== null,
-        'RENDER_set' => getenv('RENDER') !== false,
-        'production_mode' => $production,
-    ]));
-
-    // Check required credentials.
+    // Validate required database settings.
     if (
         $host === '' ||
         $name === '' ||
@@ -110,7 +96,7 @@ try {
     if ($production) {
         if (!is_file($ca) || !is_readable($ca)) {
             throw new RuntimeException(
-                'Aiven CA certificate cannot be read at ' . $ca
+                'Aiven CA certificate cannot be read.'
             );
         }
 
@@ -135,10 +121,8 @@ try {
     );
 
 } catch (Throwable $e) {
-    // Log the actual error in Render logs.
-    error_log(
-        'Database connection error: ' . $e->getMessage()
-    );
+    // Keep detailed errors in the server logs.
+    error_log('Database connection error: ' . $e->getMessage());
 
     http_response_code(503);
 
