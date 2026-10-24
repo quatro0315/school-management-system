@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/config.php';
 
 // Redirect users who are already logged in.
