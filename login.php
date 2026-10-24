@@ -1,5 +1,4 @@
-
-<?php
+﻿<?php
 require_once __DIR__ . '/config.php';
 
 // Redirect users who are already logged in.
@@ -67,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

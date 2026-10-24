@@ -1,5 +1,4 @@
-
-<?php
+﻿<?php
 // Student Management System — Render/Aiven + Local Development
 
 // Start the session before any output or redirects.
