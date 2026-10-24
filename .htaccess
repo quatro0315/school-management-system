@@ -1,0 +1,9 @@
+Options -Indexes
+<FilesMatch "^(config\.php|render-php\.ini|Dockerfile|README.*|\.env.*)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "\.(sql|bak|log)$">
+    Require all denied
+</FilesMatch>
+RewriteEngine On
+RewriteRule ^sql(/|$) - [F,L]
